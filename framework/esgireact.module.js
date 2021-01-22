@@ -105,14 +105,24 @@ class Component {
         return this;
     }
 
+    /**
+     * Transformation du component et de ses childrens en html
+     */
     convertToHtml() {
+
+        //Dans une variable, on créer un élement sur les props du state courant
         let elementHTML = document.createElement(this.getCurrentState().getProps().type);
+        //On boucle sur les attributs, pour définir chacun de ses attributs sur notre nouvel élement
         for (const [key, value] of Object.entries(this.getCurrentState().getProps().attributs)) {
             elementHTML.setAttribute(key, value);
         }
+        //On définit le contenu textuel de l'élement en récupérant le contenu du state courant
         elementHTML.textContent(this.getCurrentState().getContent());
+
+        //On vérifie sur des enfants existent, si oui on boucle sur chacun d'entre eux
         if(!!this.getCurrentState().getChildren()) {
             for (let child of this.getCurrentState().getChildren()) {
+                //Pour chaque enfant, on le converti en HTML et on l'insère à notre nouvel élement
                 elementHTML.appendChild(child.convertToHtml());
             }
         }
@@ -278,28 +288,3 @@ export {
     getPropsByComponentId,
     createElement
 }
-
-/***
- *
- *
- * Avant propos :
- * J'ai rajouté un id au component et aux props, de sorte à ce qu'on puisse lié les deux
- * J'ai créer un objet State qui contiendra les props, l'id du component associé et le content
- * L'id sera à rajouter dans un attribut data quand on passera en HTML, sorte à ce que :
- * component.getId() = "aaaaa";
- *
- *
- * Done en HTML après le cretateElement
- * <unELementHtml data-id="aaaaa"></unElementHtml>
- * document.querySelectorAll('[data-foo="value"]');
- *
- * Algo render(componentToAffiche, componentOuEndroitToAppend)
- *
- * Check si componentOuEndroitToAppend est un Component ou un Objet HTML
- * Si Component > localiser son HTML dans le dom grâce à son data-id
- * Append le componentToAffiche dans le componentOuEndroitToAppend
- * Créer la version HTML à partir des props et content dans les states (props access à placer?)
- * Vérifier si le componentOuEndroitToAppend a des children
- * Si oui, pour chaque child de children, lancer de nouveau la fonction avec createElement(child, componentOuEndroitToAppend)
- */
-
