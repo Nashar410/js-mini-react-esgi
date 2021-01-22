@@ -77,14 +77,8 @@ class Component {
      */
     render(state) {
 
-        /**
-         *
-         * TODO
-         *
-         * THROW ERROR AU TEST
-         */
-        // Si le props n'est pas bon, on return le component directement
-        if (this.getId() !== state.getComponentId()) return this;
+        // Si le props n'est pas bon, on lève une exception
+        if (this.getId() !== state.getComponentId()) throw new Error(`l'id ${state.getComponentId()} n'est pas correct`);
 
         // Si oui, on affecte les newprops au currentState
         this.setCurrentState(state);
