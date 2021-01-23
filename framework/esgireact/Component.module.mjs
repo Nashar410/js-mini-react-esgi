@@ -149,6 +149,10 @@ export class Component {
         //On définit le contenu textuel de l'élement en récupérant le contenu du state courant
         elementHTML.textContent = this.getCurrentState().getContent();
 
+        // PLacer l'id du component dans le data de l'élément
+        // <div id="kk" data-id="dfdsfghgh"></div>
+
+        
         //On vérifie sur des enfants existent, si oui on boucle sur chacun d'entre eux
         if(!!this.getCurrentState().getChildren()) {
             for (let child of this.getCurrentState().getChildren()) {

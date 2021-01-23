@@ -43,25 +43,7 @@ export function getFromListById(id, list) {
     return result;
 }
 
-export function createElement(ComponentClass, props, content, children){
-    const newComp = new ComponentClass(props, content, children);
-    let proprietes = {
-        type:'div',
-        attributs : {
-            id: 'maDiv',
-            className: 'maClass',
-        }
-    }
-    let elementHTML = document.createElement(props.type);
-    for (const [key, value] of Object.entries(props.attributs)) {
-        elementHTML.setAttribute(key, value);
-    }
-    elementHTML.textContent(content);
-    if(!!children) {
-        for (let child of children) {
-            createElement(child);
-
-            elementHTML.appendChild(child);
-        }
-    }
+export function createElement(NavbarComponent, props, content, children){
+    ... let html = nbC.render(...)
+    return html
 }
