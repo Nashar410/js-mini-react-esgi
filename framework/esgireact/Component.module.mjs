@@ -1,8 +1,12 @@
-import * as Utils from './utils.module';
+import * as Utils from '../Utils.module.mjs';
+import { State } from './State.module.mjs';
 
-class Component {
+/**
+ * Cette class est un component de base
+ * Contient toutes les méthodes pour se créer et se mettre à jour 
+ */
+export class Component {
     constructor(props, content, children) {
-
         /**
          *
          *
@@ -23,6 +27,32 @@ class Component {
 
         /** Mémoire du component */
         var oldState = {};
+
+        /** Getters */
+
+        this.getComponentId = function () {
+            return id;
+        };
+
+        this.getCurrentState = function () {
+            return currentState;
+        };
+
+        this.getOldState = function () {
+            return oldState
+        };
+
+        /** Setters */
+
+        this.setCurrentState = function (currentState) {
+            // Copie totalement l'objet currentState en créant un nouvel objet
+            currentState = Object.assign({}, currentState);
+        };
+
+        this.setOldState = function (oldState) {
+            // Copie totalement l'objet currentState en créant un nouvel objet
+            oldState = Object.assign({}, oldState);
+        };
 
     }
 
@@ -66,7 +96,7 @@ class Component {
             return this.render(this, newState);
         }
 
-        return this;
+        return this.convertToHtml();
     }
 
     /**
@@ -102,7 +132,7 @@ class Component {
             // On enlève les éventuelles undefined
             this.children = this.children.filter(child => !!child);
         }
-        return this;
+        return this.convertToHtml();
     }
 
     /**
@@ -117,7 +147,7 @@ class Component {
             elementHTML.setAttribute(key, value);
         }
         //On définit le contenu textuel de l'élement en récupérant le contenu du state courant
-        elementHTML.textContent(this.getCurrentState().getContent());
+        elementHTML.textContent = this.getCurrentState().getContent();
 
         //On vérifie sur des enfants existent, si oui on boucle sur chacun d'entre eux
         if(!!this.getCurrentState().getChildren()) {
@@ -128,163 +158,4 @@ class Component {
         }
         return elementHTML;
     }
-
-    /** Setters */
-
-    getComponentId() {
-        return this.id;
-    }
-
-    getCurrentState() {
-        return this.currentState;
-    }
-
-    getOldState() {
-        return this.oldState
-    }
-
-    /** Getters */
-
-    setCurrentState(currentState) {
-        // Copie totalement l'objet currentState en créant un nouvel objet
-        this.currentState = Object.assign({}, currentState);
-    }
-
-    setOldState(oldState) {
-        // Copie totalement l'objet currentState en créant un nouvel objet
-        this.oldState = Object.assign({}, oldState);
-    }
-}
-
-
-class State {
-    constructor(idComponent, props, content, children) {
-        /** Id du component associé */
-        var idComponent = idComponent;
-
-        /** Proriété du component associée */
-        var props = props;
-
-        /** Contenu du component associé */
-        var content = content;
-
-        /** Enfant du component */
-        var children = children;
-    }
-
-    getIdComponent() {
-        return this.idComponent;
-    }
-
-    getProps() {
-        return this.props;
-    }
-
-    getContent() {
-        return this.content;
-    }
-
-    getChildren() {
-        return this.children();
-    }
-
-    setProps(props) {
-        this.props = props;
-    }
-
-    setContent(content) {
-        this.content = content;
-    }
-
-    /**
-    * Ajout un enfant au state
-    * @param Component enfant
-    */
-    addChild(child) {
-        this.children.push(child);
-    }
-
-    /**
-    * Supprime un enfant au state 
-    * @param Component enfant
-    */
-    removeChild(child) {
-        this.children = this.children.filter(currentChild => currentChild.getId() !== child.getId())
-    }
-
-}
-
-/**
- * Retourne le component visé par l'id demandé qui se trouve dans une list de components
- * @param string id Id du component
- * @param array list liste de component
- * @returns le component ou undefined
- */
-function getComponentById(id, componentList) {
-    return getFromListById(id, componentList);
-}
-
-/**
- * Retourne la props de la liste fourni s'il concorde avec l'id donnée
- * @param string id
- * @param array list liste des props
- * @returns le props correspondant ou undefined
- */
-function getPropsByComponentId(id, propsList) {
-    return getFromListById(id, propsList);
-}
-
-/**
- * Retourne l'item de la liste fourni s'il concorde avec l'id donnée
- * @param string id
- * @param array list liste de component ou liste de props
- * @returns un item de la liste concordant avec l'id  | un objet vide si rien n'a été trouvé
- */
-function getFromListById(id, list) {
-    // Variable retournée
-    let result = undefined;
-
-    // Boucler sur la liste et examiner les items
-    for (let item of list) {
-        // Examination de l'id de l'item selon le type de liste
-        if ((!!item.getId() && item.getId() === id)
-            || (!!item.getIdComponent() && item.getIdComponent() === id)) {
-            // Affectation si l'id est reconnu
-            result = item;
-            //Arrêt de la boucle au premier trouvé
-            break;
-        }
-    }
-    return result;
-}
-
-function createElement(component, props, content, children){
-    const newComp = new component(props, content, children);
-    let proprietes = {
-        type:'div',
-        attributs : {
-            id: 'maDiv',
-            className: 'maClass',
-        }
-    }
-    let elementHTML = document.createElement(props.type);
-    for (const [key, value] of Object.entries(props.attributs)) {
-        elementHTML.setAttribute(key, value);
-    }
-    elementHTML.textContent(content);
-    if(!!children) {
-        for (let child of children) {
-            createElement(child);
-
-            elementHTML.appendChild(child);
-        }
-    }
-}
-
-export {
-    Component,
-    State,
-    getComponentById,
-    getPropsByComponentId,
-    createElement
 }

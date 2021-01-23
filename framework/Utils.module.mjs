@@ -11,8 +11,18 @@ function getUnsecureID()
     return (Date.now() + Math.random()).toString(36);
 }
 
+/**
+ * Affiche les paramètres dans la console ; syntaxe courte de console.log
+ * @param log 
+ */
+function l(...log)
+{
+    console.log(...log);
+}
+
 export
 {
     getUnsecureID,
+    l
     
 }
