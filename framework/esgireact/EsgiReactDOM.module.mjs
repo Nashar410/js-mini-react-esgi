@@ -45,30 +45,42 @@ export function getFromListById(id, list) {
 
 
 export function propAccess(content, path){
+    //On vérifie sur le content est bien un objet et qu'il n'est pas null
     if (typeof content !== "object" || content === null) throw new Error(path + " not exist");
+    //On vérifie que le path est bien de type string et non vide
     if (typeof path !== "string" || path == "") throw new Error ('Path must be valid');
 
+    //On décompose le chemin à chaque '.'
     let decomposePath = path.split(".");
+    //On initalise un tableau vide
     let tab = [];
+    //Pour chaque élement de decompose path, on l'insère dans notre tab
     for(let element of decomposePath){
         tab.push(element);
         let tabJoin = tab.join('.');
+        //On throw une erreur avec le chemin complet si l'élement est undefined
         if (typeof(content[element]) == "undefined"){
             throw new Error(tabJoin + " not exist");
         }
+        //On assigne la nouvelle valeur de content
         content = content[element];
     }
     return content;
 }
 
 export function interpolate(props, content) {
+    //On commence par boucler sur chaque prop de notre composant
     for(let prop in props) {
+        //On vérifie que la prop est bien de type string
         if (typeof(props[prop]) === 'string') {
+            //Si elle contient les moustaches, on les enlève, ainsi que les espace et on assigne dans une variable
             if (props[prop].includes('{{')) {
                 let pureProp = props[prop].replace('{{', '').replace('}}', '').trim();
+                //On utilise propaccess pour parcourir le content
                 props[prop] = propAccess({content}, pureProp);
             }
         }
+        //Si ce que l'on examine n'est pas une string, on appelle la récursivité jusqu'à ce que l'on accède bien à la prop de type string qu'on veut changer
         else {
             props[prop] = interpolate(props[prop], content);
         }

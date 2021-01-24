@@ -13,11 +13,6 @@ export class NavBarComponent extends EsgiReact.Component {
             },
             text: "{{ content.text }}"
         };
-        var content = {
-            id: 'monId',
-            class: 'maClass',
-            text: 'monText',
-        }
         super(props, content, children);
     }
 }

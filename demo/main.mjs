@@ -5,7 +5,12 @@ import { NavBarComponent } from '../framework/pressets/Navbar.module.mjs';
 
 
 const compo = new NavBarComponent(
-    "Je suis une Div",
+    //Ajout de content pour tester la création de l'élement
+    {
+        id: 'monId',
+        class: 'maClass',
+        text: 'monText',
+    },
     undefined
 );
 

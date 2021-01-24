@@ -141,6 +141,7 @@ export class Component {
      */
     convertToHtml() {
 
+        //On insère dans une variable le résultat de l'interpolation des props et du content (contenu dans un nouvel objet)
         let propsValue = interpolate(Object.assign({},this.getCurrentState().getProps()), this.getCurrentState().getContent());
 
         //Dans une variable, on créer un élement sur les props du state courant
