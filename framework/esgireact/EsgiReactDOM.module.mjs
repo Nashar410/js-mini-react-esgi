@@ -43,7 +43,41 @@ export function getFromListById(id, list) {
     return result;
 }
 
-export function createElement(NavbarComponent, props, content, children){
+
+export function propAccess(content, path){
+    if (typeof content !== "object" || content === null) throw new Error(path + " not exist");
+    if (typeof path !== "string" || path == "") throw new Error ('Path must be valid');
+
+    let decomposePath = path.split(".");
+    let tab = [];
+    for(let element of decomposePath){
+        tab.push(element);
+        let tabJoin = tab.join('.');
+        if (typeof(content[element]) == "undefined"){
+            throw new Error(tabJoin + " not exist");
+        }
+        content = content[element];
+    }
+    return content;
+}
+
+export function interpolate(props, content) {
+    for(let prop in props) {
+        if (typeof(props[prop]) === 'string') {
+            if (props[prop].includes('{{')) {
+                let pureProp = props[prop].replace('{{', '').replace('}}', '').trim();
+                props[prop] = propAccess({content}, pureProp);
+            }
+        }
+        else {
+            props[prop] = interpolate(props[prop], content);
+        }
+    }
+    return props;
+}
+
+/*export function createElement(NavbarComponent, props, content, children){
     ... let html = nbC.render(...)
     return html
 }
+*/

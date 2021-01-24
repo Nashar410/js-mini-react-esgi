@@ -1,5 +1,6 @@
 import * as Utils from '../Utils.module.mjs';
 import { State } from './State.module.mjs';
+import {interpolate} from "./EsgiReactDOM.module.mjs";
 
 /**
  * Cette class est un component de base
@@ -140,19 +141,30 @@ export class Component {
      */
     convertToHtml() {
 
+        let propsValue = interpolate(Object.assign({},this.getCurrentState().getProps()), this.getCurrentState().getContent());
+
         //Dans une variable, on créer un élement sur les props du state courant
-        let elementHTML = document.createElement(this.getCurrentState().getProps().type);
-        //On boucle sur les attributs, pour définir chacun de ses attributs sur notre nouvel élement
-        for (const [key, value] of Object.entries(this.getCurrentState().getProps().attributs)) {
-            elementHTML.setAttribute(key, value);
+        let elementHTML = document.createElement(propsValue.type);
+        //On boucle sur les attributs si ils existent, pour définir chacun de ses attributs sur notre nouvel élement
+        if (!!propsValue.attributs) {
+            for (const [key, value] of Object.entries(propsValue.attributs)) {
+                elementHTML.setAttribute(key, value);
+            }
         }
-        //On définit le contenu textuel de l'élement en récupérant le contenu du state courant
-        elementHTML.textContent = this.getCurrentState().getContent();
+        //On boucle sur les évènements rattachés à l'élement si ils existent pour les lui assigner
+        if (!!propsValue.event) {
+            for (const [key, value] of Object.entries(propsValue.event)) {
+                elementHTML.addEventListener(key, value);
+            }
+        }
+        //On définit le contenu textuel de l'élement s'il existe en récupérant le contenu du state courant
+        if (!!this.getCurrentState().getContent().text) {
+            elementHTML.textContent = this.getCurrentState().getContent().text;
+        }
 
         // PLacer l'id du component dans le data de l'élément
-        // <div id="kk" data-id="dfdsfghgh"></div>
+        elementHTML.setAttribute('data-id', this.getComponentId());
 
-        
         //On vérifie sur des enfants existent, si oui on boucle sur chacun d'entre eux
         if(!!this.getCurrentState().getChildren()) {
             for (let child of this.getCurrentState().getChildren()) {

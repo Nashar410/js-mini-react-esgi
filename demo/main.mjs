@@ -5,10 +5,6 @@ import { NavBarComponent } from '../framework/pressets/Navbar.module.mjs';
 
 
 const compo = new NavBarComponent(
-    {
-        type: "div",
-        attributs: { id: "monId", class: "maClass aa" }
-    },
     "Je suis une Div",
     undefined
 );
