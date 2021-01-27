@@ -1,3 +1,4 @@
+import { Component } from "./Component.module.mjs";
 
 /**
  * Retourne le component visé par l'id demandé qui se trouve dans une list de components
@@ -93,3 +94,21 @@ export function interpolate(props, content) {
     return html
 }
 */
+
+export function render(componentToDisplay, destination){
+    if(!destination.getComponentId()) throw new Error("Wrong destination parameter");
+    
+    let compoHtml = {};
+
+    if(!!componentToDisplay.getComponentId()){
+        compoHtml = document.querySelector(`[data-id=${componentToDisplay.getComponentId()}]`); // element html avec même id que destination
+        if(!compoHtml){
+            compoHtml = componentToDisplay.convertToHtml();
+        }
+    }
+    else if(typeof(componentToDisplay)==='string'){
+        compoHtml = new Component({type:componentToDisplay}, {}, {}).convertToHtml();
+    }
+
+    destination.appendChild(compoHtml);
+}
