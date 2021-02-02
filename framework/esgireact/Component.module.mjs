@@ -7,16 +7,8 @@ import {interpolate} from "./EsgiReactDOM.module.mjs";
  * Contient toutes les méthodes pour se créer et se mettre à jour 
  */
 export class Component {
-    constructor(props, content, children) {
-        /**
-         *
-         *
-         *
-         * TODO
-         * VALIDER LES DONNEES ENTRANTES D'UNE FAÇON OU D'UNE AUTRE
-         *
-         *
-         */
+    constructor(props, content) {
+
 
         // Variable privée
 
@@ -24,7 +16,7 @@ export class Component {
         var id = Utils.getUnsecureID();
 
         /** State courant du component */
-        var currentState = new State(this.id, props, content, children);
+        var currentState = new State(this.id, props, content, props.children, props.event);
 
         /** Mémoire du component */
         var oldState = {};
@@ -76,17 +68,6 @@ export class Component {
      * @returns
      */
     display(newState) {
-
-/**
- *
- *
- *
- * TODO
- * VALIDER LES DONNEES ENTRANTES D'UNE FAÇON OU D'UNE AUTRE (se baser sur la
- * validation dans le constructeur)
- *
- *
- */
 
         // Affectation de l'ancien state avec la valeur du state courant pour sauvegarde
         this.setOldState(this.getCurrentState());
