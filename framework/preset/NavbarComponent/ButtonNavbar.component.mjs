@@ -1,4 +1,4 @@
-import * as EsgiReact from '../esgireact/EsgiReact.module.mjs';
+import * as EsgiReact from '../../esgireact/EsgiReact.module.mjs';
 
 /**
  * preset de component : ButtonNavbar
