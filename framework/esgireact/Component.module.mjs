@@ -7,7 +7,7 @@ import {interpolate} from "./EsgiReactDOM.module.mjs";
  * Contient toutes les méthodes pour se créer et se mettre à jour 
  */
 export class Component {
-    constructor(props, content) {
+    constructor(props, content=null) {
 
 
         // Variable privée

@@ -89,11 +89,15 @@ export function interpolate(props, content) {
     return props;
 }
 
-/*export function createElement(NavbarComponent, props, content, children){
-    ... let html = nbC.render(...)
-    return html
+export function createElement(Component, props){
+    try {
+        const compo = new Component(props);
+    }catch(e){
+        throw e;
+    }
+    return compo;
 }
-*/
+
 
 export function render(componentToDisplay, destination){
     if(!destination.getComponentId()) throw new Error("Wrong destination parameter");
@@ -110,5 +114,10 @@ export function render(componentToDisplay, destination){
         compoHtml = new Component({type:componentToDisplay}, {}, {}).convertToHtml();
     }
 
+    if(!!componentToDisplay.getCurrentState().getChildren()){
+        for(let children of componentToDisplay.getCurrentState().getChildren()){
+            render(children, componentToDisplay);
+        }
+    }
     destination.appendChild(compoHtml);
 }
