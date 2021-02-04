@@ -1,4 +1,7 @@
 import * as EsgiReact from '../../esgireact/EsgiReact.module.mjs';
+import {ButtonNavbarComponent} from '../NavbarComponent/ButtonNavbar.component.mjs';
+import {DropdownNavBarComponent} from '../NavbarComponent/DropdownNavbar.component.mjs';
+
 /**
  * preset de component : Navbar
  */
@@ -13,7 +16,7 @@ export class NavBarComponent extends EsgiReact.Component {
                 class: "string", // type du champ id
             },
             text: "string",
-            children: [NavbarModule.ButtonNavbarComponent.name, NavbarModule.DropdownNavbarComponent.name] // type que peuvent avoir les childrens
+            children: [ButtonNavbarComponent.name, DropdownNavBarComponent.name] // type que peuvent avoir les childrens
         };
 
         // Ici : 
