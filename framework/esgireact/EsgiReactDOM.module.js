@@ -1,4 +1,4 @@
-import { Component } from "./Component.module.mjs";
+import { Component } from "./Component.module.js";
 
 /**
  * Retourne le component visé par l'id demandé qui se trouve dans une list de components

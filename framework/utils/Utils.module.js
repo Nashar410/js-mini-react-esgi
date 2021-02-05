@@ -1,4 +1,4 @@
-import * as HtmlTagsList from './htmltagslists.json';
+import * as HtmlTagsList from './htmltagslists.js';
 
 /**
  * Retourne un ID normalement unique
@@ -81,12 +81,7 @@ function type_check_v4(model, content) {
 
 async function checkElementType(typeToCheck, rule) {
     if(typeToCheck === rule) {
-        const response = await fetch("https://jsonkeeper.com/b/RVVV");
-        let htmlTags = await response.json();
-        if(!!htmlTags) {
-            htmlTags = HtmlTagsList;
-        }
-        if(htmlTags.includes(typeToCheck)) {
+        if(HtmlTagsList.html.includes(typeToCheck)) {
             return true;
         }
     }

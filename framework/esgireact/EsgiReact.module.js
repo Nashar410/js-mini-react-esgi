@@ -1,6 +1,6 @@
-import { Component } from './Component.module.mjs';
-import { State } from './State.module.mjs';
-import * as EsgiReactDOM from './EsgiReactDOM.module.mjs';
+import { Component } from './Component.module.js';
+import { State } from './State.module.js';
+import * as EsgiReactDOM from './EsgiReactDOM.module.js';
 
 /**
  * Module d'import générale de EsgiReact

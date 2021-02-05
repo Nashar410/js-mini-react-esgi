@@ -1,9 +1,9 @@
-import * as EsgiReact from '../../esgireact/EsgiReact.module.mjs';
+import * as EsgiReact from '../../esgireact/EsgiReact.module.js';
 
 /**
  * preset de component : DropdownNavbar
  */
-export class DropdownNavBarComponent extends EsgiReact.Component {
+export class DropdownNavbarComponent extends EsgiReact.Component {
 
     
     constructor(content, children) {

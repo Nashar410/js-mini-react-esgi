@@ -1,6 +1,6 @@
-import * as Utils from '../Utils.module.mjs';
-import { State } from './State.module.mjs';
-import {interpolate} from "./EsgiReactDOM.module.mjs";
+import * as Utils from '../utils/Utils.module.js';
+import { State } from './State.module.js';
+import {interpolate} from "./EsgiReactDOM.module.js";
 
 /**
  * Cette class est un component de base

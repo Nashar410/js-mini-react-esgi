@@ -1,11 +1,11 @@
-import * as EsgiReact from '../../esgireact/EsgiReact.module.mjs';
-import {ButtonNavbarComponent} from '../NavbarComponent/ButtonNavbar.component.mjs';
-import {DropdownNavBarComponent} from '../NavbarComponent/DropdownNavbar.component.mjs';
+import * as EsgiReact from '../../esgireact/EsgiReact.module.js';
+import {ButtonNavbarComponent} from './ButtonNavbar.component.js';
+import {DropdownNavbarComponent} from './DropdownNavbar.component.js';
 
 /**
  * preset de component : Navbar
  */
-export class NavBarComponent extends EsgiReact.Component {
+export class NavbarComponent extends EsgiReact.Component {
 
     
     constructor(content) {
@@ -16,7 +16,7 @@ export class NavBarComponent extends EsgiReact.Component {
                 class: "string", // type du champ id
             },
             text: "string",
-            children: [ButtonNavbarComponent.name, DropdownNavBarComponent.name] // type que peuvent avoir les childrens
+            children: [ButtonNavbarComponent.name, DropdownNavbarComponent.name] // type que peuvent avoir les childrens
         };
 
         // Ici : 
