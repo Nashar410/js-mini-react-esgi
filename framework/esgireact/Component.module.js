@@ -11,6 +11,7 @@ export class Component {
   constructor(componentModel, propsStructure, propsSend) {
     /** Vérification des entrants */
 
+
     // Si les props envoyés correspondent bien au modèle du component
     if (!Utils.type_check_v4(componentModel, propsSend)) {
       throw new Error(
@@ -147,14 +148,17 @@ export class Component {
       this.getCurrentState().getContent()
     );
 
+
     //Dans une variable, on créer un élement sur les props du state courant
     let elementHTML = document.createElement(propsValue.type);
+
     //On boucle sur les attributs si ils existent, pour définir chacun de ses attributs sur notre nouvel élement
     if (!!propsValue.attributs) {
       for (const [key, value] of Object.entries(propsValue.attributs)) {
         elementHTML.setAttribute(key, value);
       }
     }
+
     //On boucle sur les évènements rattachés à l'élement si ils existent pour les lui assigner
     if (!!propsValue.event) {
       for (const [key, value] of Object.entries(propsValue.event)) {

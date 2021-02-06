@@ -15,17 +15,19 @@ export class NavbarComponent extends Component {
     children: [LinkNavbarComponent],
   };
 
-  static propStructure = {
-    type: "nav",
-    attributs: {
-      id: "{{ content.attributs.id }}",
-      class: "{{ content.attributs.class }}",
-    },
-    children: "{{ content.children }}",
-  };
+  static propStructure() {
+    return {
+      type: "nav",
+      attributs: {
+        id: "{{ content.attributs.id }}",
+        class: "{{ content.attributs.class }}",
+      },
+      children: "{{ content.children }}",
+    };
+  }
 
   constructor(props) {
-    super(NavbarComponent.componentModel, NavbarComponent.propStructure, props);
+    super(NavbarComponent.componentModel, NavbarComponent.propStructure(), props);
   }
 
   static getPropsStructured() {

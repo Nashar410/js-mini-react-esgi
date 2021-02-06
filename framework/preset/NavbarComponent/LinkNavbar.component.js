@@ -16,21 +16,23 @@ export class LinkNavbarComponent extends Component {
     text: "string",
   };
 
-  static propStructure = {
-    type: "a",
-    attributs: {
-      id: "{{ content.attributs.id }} ",
-      class: "{{ content.attributs.class }} ",
-      href: "{{ content.attributs.href }} ",
-      dataLink: "{{ content.attributs.dataLink }}",
-    },
-    text: "{{ content.text }}",
-  };
+  static propStructure() {
+    return {
+      type: "a",
+      attributs: {
+        id: "{{ content.attributs.id }} ",
+        class: "{{ content.attributs.class }} ",
+        href: "{{ content.attributs.href }} ",
+        dataLink: "{{ content.attributs.dataLink }}",
+      },
+      text: "{{ content.text }}",
+    };
+  }
 
   constructor(props) {
     super(
       LinkNavbarComponent.componentModel,
-      LinkNavbarComponent.propStructure,
+      LinkNavbarComponent.propStructure(),
       props
     );
   }

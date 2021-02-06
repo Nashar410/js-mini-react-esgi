@@ -16,21 +16,23 @@ export class MainBodyComponent extends Component {
     event: ["function"],
   };
 
-  static propStructure = {
-    type: "main",
-    attributs: {
-      id: "{{ content.attributs.id }}",
-      class: "{{ content.attributs.class }}",
-    },
-    text: "{{ content.text }}",
-    children: "{{ content.children }}",
-    event: "{{ content.event }}",
-  };
+  static propStructure() {
+    return {
+      type: "main",
+      attributs: {
+        id: "{{ content.attributs.id }}",
+        class: "{{ content.attributs.class }}",
+      },
+      text: "{{ content.text }}",
+      children: "{{ content.children }}",
+      event: "{{ content.event }}",
+    };
+  }
 
   constructor(props) {
     super(
       MainBodyComponent.componentModel,
-      MainBodyComponent.propStructure,
+      MainBodyComponent.propStructure(),
       props
     );
   }

@@ -13,13 +13,15 @@ export class FooterComponent extends Component {
     text: "string",
   };
 
-  static propStructure = {
-    type: "footer",
-    attributs: {
-      class: "{{ content.attributs.class }}",
-    },
-    text: "string",
-  };
+  static propStructure() {
+    return {
+      type: "footer",
+      attributs: {
+        class: "{{ content.attributs.class }}",
+      },
+      text: "string",
+    };
+  }
 
   constructor(props) {
     super(FooterComponent.componentModel, FooterComponent.propStructure, props);

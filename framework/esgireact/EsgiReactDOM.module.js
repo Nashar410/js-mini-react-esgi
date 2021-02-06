@@ -151,10 +151,3 @@ export function render(componentToDisplay, destination) {
   }
   destination.appendChild(compoHtml);
 }
-
-/**
-
- @CJTODO
- Faire méthode permettant de récup component dans le dom
- faire render qui permet de mettre à jour un component (donc faut le récup dans le dom)kk
- */
