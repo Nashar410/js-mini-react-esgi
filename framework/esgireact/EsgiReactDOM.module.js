@@ -2,13 +2,17 @@ import { Component } from "./Component.module.js";
 import { checkElementType } from "../utils/Utils.module.js";
 
 /**
- * Retourne le component visé par l'id demandé qui se trouve dans une list de components
- * @param string id Id du component
- * @param array list liste de component
- * @returns le component ou undefined
+ * Sélectionne un componenet dans le dom grâce son data-id
+ * S'il ne le trouve pas, il renvoie undefined
+ * @param id
+ * @returns {undefined|*}
  */
-export function getComponentById(id, componentList) {
-  return getFromListById(id, componentList);
+export function getComponentByDOMId(id) {
+  try {
+    return document.querySelector(`[data-id=${id}]`).component;
+  } catch (e) {
+    return undefined;
+  }
 }
 
 /**
@@ -25,7 +29,7 @@ export function getPropsByComponentId(id, propsList) {
  * Retourne l'item de la liste fourni s'il concorde avec l'id donnée
  * @param string id
  * @param array list liste de component ou liste de props
- * @returns un item de la liste concordant avec l'id  | un objet vide si rien n'a été trouvé
+ * @returns un item de la liste concordant à l'id  | undefined
  */
 export function getFromListById(id, list) {
   // Variable retournée
@@ -33,11 +37,8 @@ export function getFromListById(id, list) {
 
   // Boucler sur la liste et examiner les items
   for (let item of list) {
-    // Examination de l'id de l'item selon le type de liste
-    if (
-      (!!item.getId() && item.getId() === id) ||
-      (!!item.getIdComponent() && item.getIdComponent() === id)
-    ) {
+    // Examination de l'id de l'item
+    if (!!item.getIdComponent() && item.getIdComponent() === id) {
       // Affectation si l'id est reconnu
       result = item;
       //Arrêt de la boucle au premier trouvé
@@ -86,7 +87,7 @@ export function interpolate(props, content) {
       }
     }
     //Si ce que l'on examine n'est pas une string, on appelle la récursivité jusqu'à ce que l'on accède bien à la prop de type string qu'on veut changer
-    else if (props.hasOwnProperty(prop)){
+    else if (props.hasOwnProperty(prop)) {
       props[prop] = interpolate(props[prop], content);
     }
   }
@@ -110,7 +111,6 @@ export function createElement(element, props) {
       compo = new element(props);
     }
     return compo.convertToHtml();
-
   } catch (e) {
     throw e;
   }

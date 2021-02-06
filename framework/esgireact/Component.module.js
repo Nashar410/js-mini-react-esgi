@@ -106,7 +106,7 @@ export class Component {
    */
   render(state) {
     // Si le props n'est pas bon, on lève une exception
-    if (this.getId() !== state.getComponentId())
+    if (this.getComponentId() !== state.getComponentId())
       throw new Error(`l'id ${state.getComponentId()} n'est pas correct`);
 
     // Si oui, on affecte les newprops au currentState
@@ -118,7 +118,7 @@ export class Component {
       for (let child of this.getOldState().getChildren()) {
         // Récupération des props
         const locatedChildren = getPropsByComponentId(
-          child.getId(),
+          child.getComponentId(),
           state.getChildren()
         );
 
