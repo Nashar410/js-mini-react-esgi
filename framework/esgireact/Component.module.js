@@ -7,10 +7,8 @@ import { getPropsByComponentId, interpolate } from "./EsgiReactDOM.module.js";
  * Contient toutes les méthodes pour se créer et se mettre à jour
  */
 export class Component {
-
   constructor(componentModel, propsStructure, propsSend) {
     /** Vérification des entrants */
-
 
     // Si les props envoyés correspondent bien au modèle du component
     if (!Utils.type_check_v4(componentModel, propsSend)) {
@@ -19,14 +17,13 @@ export class Component {
       );
     }
 
-    let props = "";
+    let props = {};
     try {
       // On colle le contenu des props send dans les props
       props = interpolate(propsStructure, propsSend);
     } catch (e) {
       throw e;
     }
-
     // Variable privée
 
     // Génération de l'id du component
@@ -148,7 +145,6 @@ export class Component {
       this.getCurrentState().getContent()
     );
 
-
     //Dans une variable, on créer un élement sur les props du state courant
     let elementHTML = document.createElement(propsValue.type);
 
@@ -161,8 +157,8 @@ export class Component {
 
     //On boucle sur les évènements rattachés à l'élement si ils existent pour les lui assigner
     if (!!propsValue.event) {
-      for (const [key, value] of Object.entries(propsValue.event)) {
-        elementHTML.addEventListener(key, value);
+      for (const ev of propsValue.event) {
+        elementHTML.addEventListener(ev.name, ev);
       }
     }
     //On définit le contenu textuel de l'élement s'il existe en récupérant le contenu du state courant

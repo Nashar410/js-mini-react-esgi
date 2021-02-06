@@ -24,7 +24,11 @@ export class FooterComponent extends Component {
   }
 
   constructor(props) {
-    super(FooterComponent.componentModel, FooterComponent.propStructure, props);
+    super(
+      FooterComponent.componentModel,
+      FooterComponent.propStructure(),
+      props
+    );
   }
 
   static getPropsStructured() {

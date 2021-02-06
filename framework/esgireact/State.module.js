@@ -7,19 +7,17 @@ export class State {
         /** Id du component associé */
         var _idComponent = idComponent;
 
-        const {children, event, ...propsEnd} = props;
-
         /** Proriété du component associée */
-        var _props = propsEnd;
+        var _props = props;
 
         /** Contenu du component associé */
         var _content = content;
 
         /** Enfant du component */
-        var _children = children;
+        var _children = !!props.children ? props.children : [];
 
         /** Event */
-        var _event = event;
+        var _event = !!props.event ? props.event : [];
 
 
         /** Function **/

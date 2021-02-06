@@ -1,5 +1,5 @@
 import { Component } from "./Component.module.js";
-import { checkElementType } from "../utils/Utils.module.js";
+import {checkElementAttributes, checkElementTags, type_check_v1} from "../utils/Utils.module.js";
 
 /**
  * Sélectionne un componenet dans le dom grâce son data-id
@@ -91,24 +91,125 @@ export function interpolate(props, content) {
       props[prop] = interpolate(props[prop], content);
     }
   }
+  // On retourne la props s'il a eut du changement, sinon le content s'il était ok de base
   return props;
 }
 
-export function createElement(element, props) {
+/**
+ * Permet de créer dynamiquement des props et son modèle
+ * @param type
+ * @param unprocessedProps
+ */
+export function getModelAndProps(unprocessedProps, type) {
+  // Si props un objet, alors ce qui est passé est soit un objet d'attributs, soit des props classique
+  // On ne s'occupe que du cas où c'est un props classique ici
+  if (type_check_v1(unprocessedProps, "object")) {
+    // On vérifie bien que ce sont des props
+    const rules = ["attributs", "event", "children", "text"];
+    // Variable ou les modèles et props seront accumulés
+    const model = !!type ? { type } : {};
+    const props = !!type ? { type } : {};
+    // Boucle sur les rules pour vérifier si elle sont présentes
+    for (const rule of rules) {
+      if (unprocessedProps.hasOwnProperty(rule)) {
+        // On récupère le modèle et la props qui seront accumulés
+        const dynamic = getDynamicModelAndProps(unprocessedProps[rule]);
+        if (rule !== "attributs") {
+          // Gérer attributs qui est un objet, donc il faut aller chercher les props
+          model[rule] = dynamic.model[rule];
+          props[rule] = dynamic.props[rule];
+        } else {
+          // C'est l'objet attributs,
+          // comme on ne veut pas attribut.attribut, on déstructure
+          model[rule] = { ...dynamic.model[rule] };
+          props[rule] = { ...dynamic.props[rule] };
+        }
+      }
+    }
+    return { model, props };
+  } else {
+    // C'est une propriété de props seul, on obtient son modèle et sa props et on revnoie
+    const { model, props } = getDynamicModelAndProps(unprocessedProps);
+    // setting du type
+    model.type = !!type ? type : "";
+    props.type = !!type ? type : "";
+    return { model, props };
+  }
+}
+
+export function getDynamicModelAndProps(unprocessedProps) {
+  // Créer une props dynamique et son modèle en fonction de ce qui est envoyé
+  // SI type est présent, on l'insert
+  let props = {};
+  let model = {};
+
+  // Si c'est la props est un string, on cherche à créer du texte
+  if (
+    (unprocessedProps.hasOwnProperty("text") &&
+      type_check_v1(unprocessedProps.text, "string")) ||
+    typeof unprocessedProps === "string"
+  ) {
+    model.text = "string";
+    props.text = !!unprocessedProps.text
+      ? unprocessedProps.text
+      : unprocessedProps;
+  }
+  // Si c'est un array, c'est soit un children soit des events
+  else if (type_check_v1(unprocessedProps, "array")) {
+    // On vérifie si le premier est une fonction
+    if (
+      !!unprocessedProps[0] &&
+      type_check_v1(unprocessedProps[0], "function")
+    ) {
+      // C'est une fonction, on la charge donc dans event
+      model.event = ["function"];
+      props.event = unprocessedProps;
+    } else if (
+      unprocessedProps.hasOwnProperty("children") &&
+      !!unprocessedProps[0] &&
+      type_check_v1(unprocessedProps[0], "object")
+    ) {
+      // C'est donc des childrens
+      model.children = [Component];
+      props.children = unprocessedProps;
+    }
+  } else if (type_check_v1(unprocessedProps, "object")) {
+    // Création des attributs et remplissage
+    model.attributs = {};
+    props.attributs = {};
+    for (const [name, value] of Object.entries(unprocessedProps)) {
+      //Si la propriété est bien à l'objet
+      if (unprocessedProps.hasOwnProperty(name)) {
+        // On regarde si l'attribut en question est légal
+        if(!checkElementAttributes(name)) throw new Error("Attribut illégal détecté.");
+        model.attributs[name] = typeof value;
+        props.attributs[name] = value;
+      }
+    }
+  }
+
+  return { model, props };
+}
+
+export function createElement(element, data) {
   try {
     // Initialisation de l'Objet final
     let compo = {};
-    if (typeof element === "string") {
-      // Sinon si élement est un string, on veut le créer en component
-      const type = checkElementType(element) ? element : "span";
+    // Si element est un string, on veut le créer en component
+    if (type_check_v1(element, "string")) {
+      // On déduit ses props des data passées en param
+      // On donne le type span par défaut aux éléments non html
+      const type = checkElementTags(element) ? element : "span";
+      //On récupère le model et les props
+      const propsAndModel = getModelAndProps(data, type);
       compo = new Component(
-        { type: typeof element, text: typeof props },
-        { type, text: props },
-        { type, text: props }
+        propsAndModel.model,
+        propsAndModel.props,
+        propsAndModel.props
       );
     } else {
       // On créer directement le component
-      compo = new element(props);
+      compo = new element(data);
     }
     return compo.convertToHtml();
   } catch (e) {
@@ -136,7 +237,7 @@ export function render(componentToDisplay, destination) {
     compoHtml = new Component(
       { type: componentToDisplay },
       {
-        type: checkElementType(componentToDisplay)
+        type: checkElementTags(componentToDisplay)
           ? componentToDisplay
           : "span",
       },

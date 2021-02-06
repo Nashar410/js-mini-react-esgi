@@ -1,4 +1,4 @@
-import * as HtmlTagsList from "./htmltagslists.js";
+import * as HtmlList from "./htmllists.js";
 
 /**
  * Retourne un ID normalement unique
@@ -42,9 +42,15 @@ export function type_check_v1(variable, type) {
 
 export function type_check_v4(model, content) {
   for (let rule in model) {
-    if (rule === "attributs" || rule === "event") {
-      for (const element of content[rule]) {
-        if (!type_check_v1(content[rule], element)) {
+    if (rule === "attributs") {
+      for (const attr of content[rule]) {
+        if (!type_check_v1(attr, model[attr])) {
+          return false;
+        }
+      }
+    } else if(rule === "event"){
+      for (const event of content[rule]) {
+        if (!type_check_v1(event, "function")) {
           return false;
         }
       }
@@ -64,15 +70,17 @@ export function type_check_v4(model, content) {
         }
       }
     } else if (rule === "type") {
-      return checkElementType(content[rule], model[rule]);
+      return checkElementTags(content[rule]);
     }
   }
   return true;
 }
 
-export function checkElementType(typeToCheck, rule) {
-  if (HtmlTagsList.html.includes(typeToCheck)) {
-    return true;
-  }
-  return false;
+export function checkElementTags(typeToCheck) {
+  return HtmlList.htmlTags.includes(typeToCheck)
+
+}
+
+export function checkElementAttributes(typeToCheck) {
+  return HtmlList.htmlAttributes.includes(typeToCheck);
 }
