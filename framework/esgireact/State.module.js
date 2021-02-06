@@ -3,48 +3,53 @@
  * Représente le state d'un component
  */
 export class State {
-    constructor(idComponent, props, content, children, event) {
+    constructor(idComponent, props, content) {
         /** Id du component associé */
-        var idComponent = idComponent;
+        var _idComponent = idComponent;
+
+        const {children, event, ...propsEnd} = props;
 
         /** Proriété du component associée */
-        var props = props;
+        var _props = propsEnd;
 
         /** Contenu du component associé */
-        var content = content;
+        var _content = content;
 
         /** Enfant du component */
-        var children = children;
+        var _children = children;
 
         /** Event */
-        var event = event;
+        var _event = event;
+
+
+        /** Function **/
 
         this.getIdComponent = function () {
-            return idComponent;
+            return _idComponent;
         };
 
         this.getProps = function () {
-            return props;
+            return _props;
         };
 
         this.getContent = function () {
-            return content;
+            return _content;
         };
 
         this.getChildren = function () {
-            return children;
+            return _children;
         };
 
         this.getEvent = function () {
-            return event;
+            return _event;
         };
 
         this.setProps = function (props) {
-            props = props;
+            _props = props;
         };
 
         this.setContent = function (content) {
-            content = content;
+            _content = content;
         };
 
         /**
@@ -52,7 +57,7 @@ export class State {
         * @param Component enfant
         */
         this.addChild = function (child) {
-            children.push(child);
+            _children.push(child);
         };
 
         /**
@@ -60,7 +65,7 @@ export class State {
         * @param Component enfant
         */
         this.removeChild = function (child) {
-            children = children.filter(currentChild => currentChild.getId() !== child.getId())
+            _children = _children.filter(currentChild => currentChild.getId() !== child.getId())
         };
 
         /**
@@ -68,7 +73,7 @@ export class State {
         * @param Component enfant
         */
         this.addEvent = function (ev) {
-            event.push(ev);
+            _event.push(ev);
         };
 
         /**
@@ -76,7 +81,7 @@ export class State {
         * @param Component enfant
         */
         this.removeEvent = function (ev) {
-            event = event.filter(currentEv => currentEv.getId() !== ev.getId())
+            _event = _event.filter(currentEv => currentEv.getId() !== ev.getId())
         };
     }
 }
