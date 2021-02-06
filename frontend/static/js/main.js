@@ -47,7 +47,15 @@ const router = async () => {
     const view = new match.route.view();
 
     // On colle la vue dans le DOM en récupérant l'élément à afficher
-    document.querySelector("#root").innerHTML = await view.getPage();
+
+    // On regarde s'il y a déjà une page
+    let selector = {};
+    if(!!document.querySelector('#currentPage')){
+        // On supprime
+        document.querySelector('#currentPage').remove();
+    }
+    // On recréé la vue demandée
+    document.querySelector("#root").appendChild(await view.getPage());
 
 };
 

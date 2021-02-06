@@ -10,7 +10,6 @@ export class Component {
 
   constructor(componentModel, propsStructure, propsSend) {
     /** Vérification des entrants */
-    console.log([componentModel, propsSend]);
 
     // Si les props envoyés correspondent bien au modèle du component
     if (!Utils.type_check_v4(componentModel, propsSend)) {
@@ -177,6 +176,9 @@ export class Component {
         elementHTML.appendChild(child);
       }
     }
+    // On l'instance de ce component dans l'HTML
+    elementHTML.component = this;
+
     return elementHTML;
   }
 }

@@ -23,6 +23,7 @@ export default class extends AbstractView {
 
     // On créer la vue de la page
     let accueil = document.createElement("div");
+    accueil.setAttribute('id', "currentPage" );
 
     // On les ajoute au root
     for (const elem of elements) {

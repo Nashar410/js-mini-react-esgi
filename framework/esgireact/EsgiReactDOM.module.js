@@ -77,16 +77,16 @@ export function interpolate(props, content) {
   //On commence par boucler sur chaque prop de notre composant
   for (let prop in props) {
     //On vérifie que la prop est bien de type string
-    if (typeof props[prop] === "string") {
+    if (props.hasOwnProperty(prop) && typeof props[prop] === "string") {
       //Si elle contient les moustaches, on les enlève, ainsi que les espace et on assigne dans une variable
-      if (props[prop].includes("{{")) {
+      if (props.hasOwnProperty(prop) && props[prop].includes("{{")) {
         let pureProp = props[prop].replace("{{", "").replace("}}", "").trim();
         //On utilise propaccess pour parcourir le content
         props[prop] = propAccess({ content }, pureProp);
       }
     }
     //Si ce que l'on examine n'est pas une string, on appelle la récursivité jusqu'à ce que l'on accède bien à la prop de type string qu'on veut changer
-    else {
+    else if (props.hasOwnProperty(prop)){
       props[prop] = interpolate(props[prop], content);
     }
   }
@@ -151,3 +151,10 @@ export function render(componentToDisplay, destination) {
   }
   destination.appendChild(compoHtml);
 }
+
+/**
+
+ @CJTODO
+ Faire méthode permettant de récup component dans le dom
+ faire render qui permet de mettre à jour un component (donc faut le récup dans le dom)kk
+ */
