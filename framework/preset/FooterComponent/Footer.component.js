@@ -19,7 +19,7 @@ export class FooterComponent extends Component {
       attributs: {
         class: "{{ content.attributs.class }}",
       },
-      text: "string",
+      text: "{{ content.text }}",
     };
   }
 

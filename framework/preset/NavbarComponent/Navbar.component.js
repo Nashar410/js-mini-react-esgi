@@ -25,11 +25,6 @@ export class NavbarComponent extends Component {
       children: "{{ content.children }}",
     };
   }
-
-  constructor(props) {
-    super(NavbarComponent.componentModel, NavbarComponent.propStructure(), props);
-  }
-
   static getPropsStructured() {
     return {
       type: "nav",
@@ -40,4 +35,10 @@ export class NavbarComponent extends Component {
       children: [],
     };
   }
+
+  constructor(props) {
+    super(NavbarComponent.componentModel, NavbarComponent.propStructure(), props);
+  }
+
+
 }

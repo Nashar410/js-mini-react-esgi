@@ -84,3 +84,48 @@ export function checkElementTags(typeToCheck) {
 export function checkElementAttributes(typeToCheck) {
   return HtmlList.htmlAttributes.includes(typeToCheck);
 }
+
+
+export function deepCopy(obj) {
+
+
+  if(typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+  if(obj instanceof Array) {
+    return obj.reduce((arr, item, i) => {
+      arr[i] = deepCopy(item);
+      return arr;
+    }, []);
+  }
+
+
+  if(obj instanceof Object) {
+    return Object.keys(obj).reduce((newObj, key) => {
+      newObj[key] = deepCopy(obj[key]);
+      return newObj;
+    }, {})
+  }
+}
+
+export function deepEqual(a, b){
+  if (a === b) return true;
+
+  if (typeof a != 'object' || typeof b != 'object' || a == null || b == null) return false;
+
+  let keysA = Object.keys(a), keysB = Object.keys(b);
+
+  if (keysA.length !== keysB.length) return false;
+
+  for (let key of keysA) {
+    if (!keysB.includes(key)) return false;
+
+    if (typeof a[key] === 'function' || typeof b[key] === 'function') {
+      if (a[key].toString() !== b[key].toString()) return false;
+    } else {
+      if (!deepEqual(a[key], b[key])) return false;
+    }
+  }
+
+  return true;
+}
