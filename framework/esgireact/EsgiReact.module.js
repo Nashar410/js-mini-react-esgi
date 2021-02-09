@@ -1,5 +1,4 @@
 import { Component } from './Component.module.js';
-import { State } from './State.module.js';
 import * as EsgiReactDOM from './EsgiReactDOM.module.js';
 
 /**
@@ -8,6 +7,5 @@ import * as EsgiReactDOM from './EsgiReactDOM.module.js';
  */
 export {
     Component,
-    State,
     EsgiReactDOM
 }

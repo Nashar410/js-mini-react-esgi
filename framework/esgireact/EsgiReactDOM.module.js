@@ -1,5 +1,9 @@
 import { Component } from "./Component.module.js";
-import {checkElementAttributes, checkElementTags, type_check_v1} from "../utils/Utils.module.js";
+import {
+  checkElementAttributes,
+  checkElementTags,
+  type_check_v1,
+} from "../utils/Utils.module.js";
 
 /**
  * Sélectionne un componenet dans le dom grâce son data-id
@@ -7,9 +11,52 @@ import {checkElementAttributes, checkElementTags, type_check_v1} from "../utils/
  * @param id
  * @returns {undefined|*}
  */
-export function getComponentByDOMId(id) {
+export function getComponentByDataId(id) {
   try {
     return document.querySelector(`[data-id=${id}]`).component;
+  } catch (e) {
+    return undefined;
+  }
+}
+
+/**
+ * Renvoie un élément html correspondant à un id de component
+ * S'il ne le trouve pas, il renvoie undefined
+ * @param id
+ * @returns {undefined|*}
+ */
+export function getHTMLElementByComponentId(id) {
+  try {
+    return document.querySelector(`[data-id="${id}"]`);
+  } catch (e) {
+    throw e;
+    return undefined;
+  }
+}
+
+/**
+ * Sélectionne un componenet dans le dom grâce son id, préalablement défini
+ * S'il ne le trouve pas, il renvoie undefined
+ * @param id
+ * @returns {undefined|*}
+ */
+export function getComponentByDOMId(id) {
+  try {
+    return document.querySelector(`#${id}`).component;
+  } catch (e) {
+    return undefined;
+  }
+}
+
+/**
+ * Sélectionne un componenet dans le dom grâce à une query (#, ., >, etc)
+ * S'il ne le trouve pas, il renvoie undefined
+ * @param query
+ * @returns {undefined|*}
+ */
+export function getComponentByDOMQuery(query) {
+  try {
+    return document.querySelector(`${query}`).component;
   } catch (e) {
     return undefined;
   }
@@ -38,7 +85,7 @@ export function getFromListById(id, list) {
   // Boucler sur la liste et examiner les items
   for (let item of list) {
     // Examination de l'id de l'item
-    if (!!item.getIdComponent() && item.getIdComponent() === id) {
+    if (!!item.getComponentId() && item.getComponentId() === id) {
       // Affectation si l'id est reconnu
       result = item;
       //Arrêt de la boucle au premier trouvé
@@ -114,15 +161,16 @@ export function getModelAndProps(unprocessedProps, type) {
       if (unprocessedProps.hasOwnProperty(rule)) {
         // On récupère le modèle et la props qui seront accumulés
         const dynamic = getDynamicModelAndProps(unprocessedProps[rule]);
-        if (rule !== "attributs") {
-          // Gérer attributs qui est un objet, donc il faut aller chercher les props
-          model[rule] = dynamic.model[rule];
-          props[rule] = dynamic.props[rule];
-        } else {
+        if (rule === "attributs") {
           // C'est l'objet attributs,
           // comme on ne veut pas attribut.attribut, on déstructure
           model[rule] = { ...dynamic.model[rule] };
           props[rule] = { ...dynamic.props[rule] };
+        } else {
+          // Gérer attributs qui est un objet, donc il faut aller chercher les props
+          model[rule] = dynamic.model[rule];
+          props[rule] = dynamic.props[rule];
+
         }
       }
     }
@@ -157,15 +205,11 @@ export function getDynamicModelAndProps(unprocessedProps) {
   // Si c'est un array, c'est soit un children soit des events
   else if (type_check_v1(unprocessedProps, "array")) {
     // On vérifie si le premier est une fonction
-    if (
-      !!unprocessedProps[0] &&
-      type_check_v1(unprocessedProps[0], "function")
-    ) {
+    if (!!unprocessedProps[0] && typeof unprocessedProps[0] === "function") {
       // C'est une fonction, on la charge donc dans event
       model.event = ["function"];
       props.event = unprocessedProps;
     } else if (
-      unprocessedProps.hasOwnProperty("children") &&
       !!unprocessedProps[0] &&
       type_check_v1(unprocessedProps[0], "object")
     ) {
@@ -181,7 +225,8 @@ export function getDynamicModelAndProps(unprocessedProps) {
       //Si la propriété est bien à l'objet
       if (unprocessedProps.hasOwnProperty(name)) {
         // On regarde si l'attribut en question est légal
-        if(!checkElementAttributes(name)) throw new Error("Attribut illégal détecté.");
+        if (!checkElementAttributes(name))
+          throw new Error("Attribut illégal détecté.");
         model.attributs[name] = typeof value;
         props.attributs[name] = value;
       }
@@ -215,40 +260,4 @@ export function createElement(element, data) {
   } catch (e) {
     throw e;
   }
-}
-
-export function render(componentToDisplay, destination) {
-  if (destination.constructor.name !== "HTMLDivElement") {
-    if (!destination.getComponentId()) {
-      throw new Error("Mauvaise destination");
-    }
-  }
-
-  let compoHtml = {};
-
-  if (!!componentToDisplay.getComponentId()) {
-    compoHtml = document.querySelector(
-      `[data-id=${componentToDisplay.getComponentId()}]`
-    ); // element html avec même id que destination
-    if (!compoHtml) {
-      compoHtml = componentToDisplay.convertToHtml();
-    }
-  } else if (typeof componentToDisplay === "string") {
-    compoHtml = new Component(
-      { type: componentToDisplay },
-      {
-        type: checkElementTags(componentToDisplay)
-          ? componentToDisplay
-          : "span",
-      },
-      { type: componentToDisplay }
-    ).convertToHtml();
-  }
-
-  if (!!componentToDisplay.getCurrentState().getChildren()) {
-    for (let children of componentToDisplay.getCurrentState().getChildren()) {
-      render(children, componentToDisplay);
-    }
-  }
-  destination.appendChild(compoHtml);
 }

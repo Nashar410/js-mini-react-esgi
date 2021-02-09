@@ -1,12 +1,22 @@
 import * as Utils from "../utils/Utils.module.js";
-import { State } from "./State.module.js";
-import { getPropsByComponentId, interpolate } from "./EsgiReactDOM.module.js";
+import {
+  getComponentByDOMId,
+  getHTMLElementByComponentId,
+  getPropsByComponentId,
+  interpolate,
+} from "./EsgiReactDOM.module.js";
+import { deepCopy, deepEqual } from "../utils/Utils.module.js";
 
 /**
  * Cette class est un component de base
  * Contient toutes les méthodes pour se créer et se mettre à jour
  */
 export class Component {
+  /** State, ne doit pas être appelé en tant que tel
+   * @deprecated
+   */
+  currentState;
+
   constructor(componentModel, propsStructure, propsSend) {
     /** Vérification des entrants */
 
@@ -24,16 +34,14 @@ export class Component {
     } catch (e) {
       throw e;
     }
+
+    // Affectation des props au state
+    this.currentState = props;
+
     // Variable privée
 
     // Génération de l'id du component
     var id = Utils.getUnsecureID();
-
-    /** State courant du component */
-    var currentState = new State(id, props, propsSend);
-
-    /** Mémoire du component */
-    var oldState = {};
 
     /** Getters */
 
@@ -41,97 +49,102 @@ export class Component {
       return id;
     };
 
-    this.getCurrentState = function () {
-      return currentState;
-    };
-
-    this.getOldState = function () {
-      return oldState;
-    };
-
     /** Setters */
-
-    this.setCurrentState = function (currentState) {
+    this.setCurrentState = function (newProps) {
+      const children = !!this.currentState.children
+        ? [...this.currentState.children]
+        : [];
       // Copie totalement l'objet currentState en créant un nouvel objet
-      currentState = Object.assign({}, currentState);
+      this.currentState = deepCopy(newProps);
+      this.currentState.children = !!children ? children : [];
     };
+  }
 
-    this.setOldState = function (oldState) {
-      // Copie totalement l'objet currentState en créant un nouvel objet
-      oldState = Object.assign({}, oldState);
-    };
+  getState() {
+    const children = !!this.currentState.children
+      ? [...this.currentState.children]
+      : [];
+    const copy = deepCopy(this.currentState);
+    copy.children = !!children ? children : [];
+    return copy;
+  }
+
+  setState(newProps) {
+    return this.display(newProps);
   }
 
   /**
    * Check si le nouveau state est égale à l'ancien
-   * @param {*} oldState
-   * @param {*} newState
+   * @param {*} newProps
    * @returns boolean
    */
-  shouldUpdate(oldState, newState) {
-    // JSON.stringify des deux states pour comparer leur contenu
-    return (
-      JSON.stringify(oldState.getProps()) !==
-        JSON.stringify(newState.getProps()) ||
-      JSON.stringify(oldState.getContent()) !==
-        JSON.stringify(newState.getContent())
-    );
+  shouldUpdate(newProps) {
+    return !deepEqual(this.currentState, newProps);
   }
 
   /**
    * Retourne un component avec les props données en paramètre
    * @returns
-   * @param newState
+   * @param newProps
    */
-  display(newState) {
-    // Affectation de l'ancien state avec la valeur du state courant pour sauvegarde
-    this.setOldState(this.getCurrentState());
-
-    // Vérifier si le state de l'application est égale aux new state envoyés
-    if (this.shouldUpdate(this.getOldState(), newState)) {
+  display(newProps) {
+    // Vérifier si le state de l'application est égale aux new props envoyés
+    if (this.shouldUpdate(newProps)) {
       // On demande une mise à jour du component
-      return this.render(this, newState);
+      return this.render(newProps);
     }
-
     return this.convertToHtml();
   }
 
   /**
    * Mise à jour un component et de ses childrens
-   * @param {*} this
-   * @param {*} state
-   * @param {*} content
+   * @param {*} newProps
    */
-  render(state) {
-    // Si le props n'est pas bon, on lève une exception
-    if (this.getComponentId() !== state.getComponentId())
-      throw new Error(`l'id ${state.getComponentId()} n'est pas correct`);
+  render(newProps) {
+    // On effectue une sauvegarde du state
 
-    // Si oui, on affecte les newprops au currentState
-    this.setCurrentState(state);
+    // Si la props courant ou entrant a des event
+    if (!deepEqual(this.currentState.event, newProps.event)) {
+      this.currentState.event = newProps.event;
+    }
 
-    // Si le component a des enfants
-    if (!!this.getOldState().getChildren()) {
-      // Pour chacun d'entre eux
-      for (let child of this.getOldState().getChildren()) {
-        // Récupération des props
-        const locatedChildren = getPropsByComponentId(
-          child.getComponentId(),
-          state.getChildren()
+    // Si le component a des children
+    if (!deepEqual(this.currentState.children, newProps.children)) {
+      // on boucle sur les childrens entrant
+
+      for (const child of newProps.children) {
+        // Pour chacun d'eux, déterminé s'ils sont présents dans les anciennes
+        const currentChild = this.currentState.children.filter(
+          (ch) => ch.getComponentId() === child.getComponentId()
         );
-
-        // Si les props existent
-        if (!!locatedChildren) {
-          // on passe le relais à la méthode de l'enfant pour qu'il se mette à jour ou non
-          child = child.display(locatedChildren.getCurrentState());
+        // s'il l'est, il faut demander une maj
+        if (!!currentChild) {
+          // On demande au child de voir s'il a besoin d'une mise à jour, il s'occupe du reste
+          currentChild.setState(child.getState());
         } else {
-          // les props n'ont pas été retransmise, cela veut dire que ce component n'existe plus
-          child = undefined;
+          // Il ne l'est pas, on l'ajoute
+          this.currentState.children.push(child);
         }
       }
-      // On enlève les éventuelles undefined
-      this.children = this.children.filter((child) => !!child);
+      // Enfin, on gère le cas d'une suppression en ne récupérant que les childrens commun au deux listes de children
+      this.currentState.children = newProps.children.filter((chNewProps) =>
+        this.currentState.children.includes(
+          (chCurrentState) =>
+            chCurrentState.getComponentId() === chNewProps.getComponentId()
+        )
+      );
     }
+
+    // S'il y a une différence dans les attributs, on opère le changement
+    if (!deepEqual(this.currentState.attributs, newProps.attributs)) {
+      this.currentState.attributs = newProps.attributs;
+    }
+
+    // On change le text aussi en conséquence s'il y a du changement
+    if (!deepEqual(this.currentState.text, newProps.text)) {
+      this.currentState.text = newProps.text;
+    }
+
     return this.convertToHtml();
   }
 
@@ -139,39 +152,33 @@ export class Component {
    * Transformation du component et de ses childrens en html
    */
   convertToHtml() {
-    //On insère dans une variable le résultat de l'interpolation des props et du content (contenu dans un nouvel objet)
-    let propsValue = interpolate(
-      Object.assign({}, this.getCurrentState().getProps()),
-      this.getCurrentState().getContent()
-    );
-
     //Dans une variable, on créer un élement sur les props du state courant
-    let elementHTML = document.createElement(propsValue.type);
+    let elementHTML = document.createElement(this.currentState.type);
 
     //On boucle sur les attributs si ils existent, pour définir chacun de ses attributs sur notre nouvel élement
-    if (!!propsValue.attributs) {
-      for (const [key, value] of Object.entries(propsValue.attributs)) {
+    if (!!this.currentState.attributs) {
+      for (const [key, value] of Object.entries(this.currentState.attributs)) {
         elementHTML.setAttribute(key, value);
       }
     }
 
     //On boucle sur les évènements rattachés à l'élement si ils existent pour les lui assigner
-    if (!!propsValue.event) {
-      for (const ev of propsValue.event) {
+    if (!!this.currentState.event) {
+      for (const ev of this.currentState.event) {
         elementHTML.addEventListener(ev.name, ev);
       }
     }
     //On définit le contenu textuel de l'élement s'il existe en récupérant le contenu du state courant
-    if (!!this.getCurrentState().getContent().text) {
-      elementHTML.textContent = this.getCurrentState().getContent().text;
+    if (!!this.currentState.text) {
+      elementHTML.textContent = this.currentState.text;
     }
 
     // PLacer l'id du component dans le data de l'élément
     elementHTML.setAttribute("data-id", this.getComponentId());
 
     //On vérifie sur des enfants existent, si oui on boucle sur chacun d'entre eux
-    if (!!this.getCurrentState().getChildren()) {
-      for (let child of this.getCurrentState().getChildren()) {
+    if (!!this.currentState.children) {
+      for (let child of this.currentState.children) {
         //Pour chaque enfant, on le converti en HTML et on l'insère à notre nouvel élement
         elementHTML.appendChild(child);
       }
@@ -179,6 +186,14 @@ export class Component {
     // On l'instance de ce component dans l'HTML
     elementHTML.component = this;
 
-    return elementHTML;
+    // Si la vu existe dans le DOM, on la remplace par celle qu'on vient de créer, sinon on retourne l'élément html
+    const existingHTML = getHTMLElementByComponentId(this.getComponentId());
+
+    if (!!existingHTML) {
+      // On remplace
+      existingHTML.parentNode.replaceChild(elementHTML, existingHTML);
+    } else {
+      return elementHTML;
+    }
   }
 }
