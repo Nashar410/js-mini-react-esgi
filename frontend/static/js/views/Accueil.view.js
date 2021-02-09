@@ -1,13 +1,7 @@
 import { AbstractView } from "./AbstractView.view.js";
 import {
-  LinkNavbarComponent,
-  NavbarComponent,
-} from "../../../../framework/preset/NavbarComponent/Navbar.module.js";
-import {
-  createElement,
-  render,
+  createElement
 } from "../../../../framework/esgireact/EsgiReactDOM.module.js";
-import { FooterComponent } from "../../../../framework/preset/FooterComponent/Footer.module.js";
 import { MainBodyComponent } from "../../../../framework/preset/MainComponent/Main.module.js";
 import {BaseView} from './Base.view.js';
 
