@@ -22,9 +22,9 @@ export class BaseView {
     // On fait ses childrens : des liens (créer via une boucle pour gagner du temps)
     let linkContent = [
       { id: "navLink", href: "/", text: "Accueil" },
-      { id: "navLink1", href: "/mohand", text: "CV de Mohand" },
-      { id: "navLink2", href: "/mathieu", text: "CV de Mathieu" },
-      { id: "navLink3", href: "/christophe", text: "CV de Christophe" },
+      { id: "navLink1", href: "/mohand", text: "Page de Mohand" },
+      { id: "navLink2", href: "/mathieu", text: "Page de Mathieu" },
+      { id: "navLink3", href: "/christophe", text: "Page de Christophe" },
     ];
 
     for (const childData of linkContent) {

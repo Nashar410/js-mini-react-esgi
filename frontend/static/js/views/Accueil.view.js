@@ -47,12 +47,7 @@ export class AccueilView extends AbstractView {
     );
     const pTextPresentation2 = createComponent(
       "p",
-      `Nous espérons que la visite vous plaira. Nos CV sont trouvable dans les autres pages du site.`
-    );
-
-    const pTextPresentation3 = createComponent(
-      "p",
-      `En attendant, voici un tableau`
+      `Nous espérons que la visite vous plaira. Nos pages sont accessibles via le menu du site`
     );
 
     //On rajoute les children
@@ -61,7 +56,6 @@ export class AccueilView extends AbstractView {
       h2Title,
       pTextPresentation1,
       pTextPresentation2,
-      pTextPresentation3,
     ];
 
     return createComponent(MainBodyComponent, propsMainBody);

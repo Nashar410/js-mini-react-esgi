@@ -187,7 +187,7 @@ function geoFindMe() {
 
     status.textContent = '';
     mapLink.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} °`;
-    merci.textContent = `Ravi de vous avoir été utile :)`;
+    merci.textContent = `Voici vos coordonnées GPS, ravi de vous avoir été utile :)`;
   }
 
   function error() {
