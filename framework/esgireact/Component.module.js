@@ -58,8 +58,8 @@ export class Component {
     /** Setter du currentState, effectue un copie profonde des newProps et l'affecte au state */
     this.setCurrentState = function (newProps) {
       // Sauvegarde des childrens pour ne pas qu'il soit copié/découplé
-      const children = !!this.currentState.children
-        ? [...this.currentState.children]
+      const children = !!newProps.children
+        ? [...newProps.children]
         : [];
 
       // Copie totalement l'objet currentState en créant un nouvel objet
