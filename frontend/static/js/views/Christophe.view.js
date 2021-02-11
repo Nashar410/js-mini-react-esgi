@@ -104,8 +104,6 @@ export class ChristopheView extends AbstractView {
     const click = () => {
       // Récupération de la div via son id
       const divToChange = getComponentByDOMId("divToChange");
-
-      console.log("click1", divToChange.getState());
       // Copy du state à modifier
       const stateDiv = divToChange.getState();
 
