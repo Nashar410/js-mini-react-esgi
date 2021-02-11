@@ -1,7 +1,7 @@
-import { NavbarComponent } from "../../../../framework/preset/NavbarComponent/Navbar.component.js";
-import { LinkNavbarComponent } from "../../../../framework/preset/NavbarComponent/LinkNavbar.component.js";
-import { createElement } from "../../../../framework/esgireact/EsgiReactDOM.module.js";
-import { FooterComponent } from "../../../../framework/preset/FooterComponent/Footer.component.js";
+import { NavbarComponent } from "../../../../framework/preset/Navbar.component.js";
+import { LinkNavbarComponent } from "../../../../framework/preset/LinkNavbar.component.js";
+import { createComponent } from "../../../../framework/esgireact/EsgiReactDOM.module.js";
+import { FooterComponent } from "../../../../framework/preset/Footer.component.js";
 
 export class BaseView {
   /**
@@ -40,12 +40,12 @@ export class BaseView {
       propsLinkNavbar.text = childData.text;
       // On le rajoute dans les props de la navbar
       propsNavbar.children.push(
-        createElement(LinkNavbarComponent, propsLinkNavbar)
+        createComponent(LinkNavbarComponent, propsLinkNavbar)
       );
     }
 
     // On peut construire la navbar maintenant
-    return createElement(NavbarComponent, propsNavbar);
+    return createComponent(NavbarComponent, propsNavbar);
   }
 
   /**
@@ -60,7 +60,7 @@ export class BaseView {
         ROBERT Mathieu pour le cours de Javascript l'ESGI.`;
 
     // On créer l'élément qu'on retourne
-    return createElement(FooterComponent, propsFooter);
+    return createComponent(FooterComponent, propsFooter);
   }
 
   /**

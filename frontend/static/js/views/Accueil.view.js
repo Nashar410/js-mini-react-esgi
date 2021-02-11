@@ -1,11 +1,15 @@
 import { AbstractView } from "./AbstractView.view.js";
 import {
-  createElement
+  createComponent
 } from "../../../../framework/esgireact/EsgiReactDOM.module.js";
-import { MainBodyComponent } from "../../../../framework/preset/MainComponent/Main.module.js";
 import {BaseView} from './Base.view.js';
+import {MainBodyComponent} from '../../../../framework/preset/MainBody.component.js';
 
+/**
+ * View d'accueil
+ */
 export class AccueilView extends AbstractView {
+
   constructor() {
     super();
     this.setTitle("Accueil ESGIReact");
@@ -17,8 +21,7 @@ export class AccueilView extends AbstractView {
     const elements = [BaseView.getNavbar(), this.getMainBody(), BaseView.getFooter()];
 
     // On créer la vue de la page
-    let accueil = document.createElement("div");
-    accueil.setAttribute('id', "currentPage" );
+    let accueil = BaseView.getBasePage();
 
     // On les ajoute au root
     for (const elem of elements) {
@@ -28,27 +31,26 @@ export class AccueilView extends AbstractView {
     return accueil;
   }
 
-
   getMainBody() {
     //Préparation des props du body
     const propsMainBody = MainBodyComponent.getPropsStructured();
     propsMainBody.text = ``;
     //Première enfant, un title
-    const h1Title = createElement("h1", "Bienvenue !");
-    const h2Title = createElement(
+    const h1Title = createComponent("h1", "Bienvenue !");
+    const h2Title = createComponent(
       "h2",
       "Ce site a été généré avec EsgiReact !"
     );
-    const pTextPresentation1 = createElement(
+    const pTextPresentation1 = createComponent(
       "p",
       `La totalité du HTML sur ce site a été généré avec notre framework. Personne n'a modifié directement le HTML... C'est EsgiReact qui s'en est occupé !`
     );
-    const pTextPresentation2 = createElement(
+    const pTextPresentation2 = createComponent(
       "p",
       `Nous espérons que la visite vous plaira. Nos CV sont trouvable dans les autres pages du site.`
     );
 
-    const pTextPresentation3 = createElement(
+    const pTextPresentation3 = createComponent(
       "p",
       `En attendant, voici un tableau`
     );
@@ -62,6 +64,6 @@ export class AccueilView extends AbstractView {
       pTextPresentation3,
     ];
 
-    return createElement(MainBodyComponent, propsMainBody);
+    return createComponent(MainBodyComponent, propsMainBody);
   }
 }

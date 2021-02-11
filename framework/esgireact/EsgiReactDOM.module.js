@@ -63,10 +63,10 @@ export function getComponentByDOMQuery(query) {
 }
 
 /**
- * Retourne la props de la liste fourni s'il concorde avec l'id donnée
- * @param string id
- * @param array list liste des props
- * @returns le props correspondant ou undefined
+ *  Retourne la props de la liste fourni s'il concorde avec l'id donnée
+ * @param id
+ * @param propsList
+ * @returns {any}
  */
 export function getPropsByComponentId(id, propsList) {
   return getFromListById(id, propsList);
@@ -74,9 +74,9 @@ export function getPropsByComponentId(id, propsList) {
 
 /**
  * Retourne l'item de la liste fourni s'il concorde avec l'id donnée
- * @param string id
- * @param array list liste de component ou liste de props
- * @returns un item de la liste concordant à l'id  | undefined
+ * @param id
+ * @param list
+ * @returns {any}
  */
 export function getFromListById(id, list) {
   // Variable retournée
@@ -95,6 +95,12 @@ export function getFromListById(id, list) {
   return result;
 }
 
+/**
+ * Accède aux propriétés d'un objet selon le path passer en param
+ * @param content
+ * @param path
+ * @returns {*}
+ */
 export function propAccess(content, path) {
   //On vérifie sur le content est bien un objet et qu'il n'est pas null
   if (typeof content !== "object" || content === null)
@@ -121,6 +127,12 @@ export function propAccess(content, path) {
   return content;
 }
 
+/**
+ * Remplace une chaine de caractère avec le contenu de ce qui est passé en param
+ * @param props
+ * @param content
+ * @returns {*}
+ */
 export function interpolate(props, content) {
   //On commence par boucler sur chaque prop de notre composant
   for (let prop in props) {
@@ -143,7 +155,7 @@ export function interpolate(props, content) {
 }
 
 /**
- * Permet de créer dynamiquement des props et son modèle
+ * Permet de créer dynamiquement la structure des props et son modèle pour component
  * @param type
  * @param unprocessedProps
  */
@@ -185,6 +197,11 @@ export function getModelAndProps(unprocessedProps, type) {
   }
 }
 
+/**
+ * Rend la structure du model et de le props (à l'unité) de manière dynamique
+ * @param unprocessedProps
+ * @returns {{model: {}, props: {}}}
+ */
 export function getDynamicModelAndProps(unprocessedProps) {
   // Créer une props dynamique et son modèle en fonction de ce qui est envoyé
   // SI type est présent, on l'insert
@@ -236,7 +253,13 @@ export function getDynamicModelAndProps(unprocessedProps) {
   return { model, props };
 }
 
-export function createElement(element, data) {
+/**
+ * Permet de créer un component
+ * @param element Peut etre un string ou un Component (et enfants...)
+ * @param data Peut etre un string (sera interpreter comme du texte) ou une props structuré (sera parsé)
+ * @returns {*}
+ */
+export function createComponent(element, data) {
   try {
     // Initialisation de l'Objet final
     let compo = {};
@@ -247,6 +270,8 @@ export function createElement(element, data) {
       const type = checkElementTags(element) ? element : "span";
       //On récupère le model et les props
       const propsAndModel = getModelAndProps(data, type);
+
+      // On créer le component
       compo = new Component(
         propsAndModel.model,
         propsAndModel.props,
@@ -256,6 +281,7 @@ export function createElement(element, data) {
       // On créer directement le component
       compo = new element(data);
     }
+    // On retourne l'objet HTLML du component. Le component en lui-meme est stocké à l'intérieur
     return compo.convertToHtml();
   } catch (e) {
     throw e;

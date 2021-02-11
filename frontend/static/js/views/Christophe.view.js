@@ -1,11 +1,10 @@
 import { AbstractView } from "./AbstractView.view.js";
-import { MainBodyComponent } from "../../../../framework/preset/MainComponent/MainBody.component.js";
+import { MainBodyComponent } from "../../../../framework/preset/MainBody.component.js";
 import {
-  createElement,
+  createComponent,
   getComponentByDOMId,
 } from "../../../../framework/esgireact/EsgiReactDOM.module.js";
 import { BaseView } from "./Base.view.js";
-import { EsgiReactDOM } from "../../../../framework/esgireact/EsgiReact.module.js";
 
 export class ChristopheView extends AbstractView {
   constructor() {
@@ -35,7 +34,7 @@ export class ChristopheView extends AbstractView {
 
   getMainBody() {
     const propsMainBody = MainBodyComponent.getPropsStructured();
-    const h1Title = createElement(
+    const h1Title = createComponent(
       "h1",
       "Page basique de présentation du framework!"
     );
@@ -50,27 +49,27 @@ export class ChristopheView extends AbstractView {
     propsMainBody.attributs.class = "w3-container w3-light-grey";
     propsMainBody.attributs.id = "mainBody";
 
-    return createElement(MainBodyComponent, propsMainBody);
+    return createComponent(MainBodyComponent, propsMainBody);
   }
 
   getForm() {
     const keyup = ($event) => {
       // Récupération du p via son id
-      const pToChange = EsgiReactDOM.getComponentByDOMId("pToChange");
+      const pToChange = getComponentByDOMId("pToChange");
       // Mise à jour du component en oneliner
       pToChange.setState({
         ...pToChange.getState(),
         text: $event.target.value,
       });
     };
-    return createElement("form", {
+    return createComponent("form", {
       attributs: {
         class: "w3-container w3-card-4 w3-round-large w3-pink",
         id: "formInput",
       },
       children: [
-        createElement("label", "Ce que vous écrivez ici sera copié dans la div !"),
-        createElement("input", {
+        createComponent("label", "Ce que vous écrivez ici sera copié dans la div !"),
+        createComponent("input", {
           attributs: {
             id: "inputField",
             class: "w3-input w3-border w3-round-large w3-margin-bottom",
@@ -85,14 +84,14 @@ export class ChristopheView extends AbstractView {
   }
 
   getDivToChange() {
-    return createElement("div", {
+    return createComponent("div", {
       text: `Cet élément HTML se met à jour en fonction des intéractions que vous avez avec la page.`,
       attributs: {
         id: "divToChange",
         class: "w3-blue w3-panel w3-padding w3-large",
       },
       children: [
-        createElement("p", {
+        createComponent("p", {
           text: `Ce texte change en fonction du contenu de l'input.
           Bien sûr, les mêmes résultats peuvent être obtenu avec du Javascript basique, mais nous n'utilisons que les méthodes de notre EsgiReact.`,
           attributs: { id: "pToChange", class: "w3-medium" },
@@ -119,7 +118,7 @@ export class ChristopheView extends AbstractView {
       divToChange.setState(stateDiv);
     };
 
-    return createElement("button", {
+    return createComponent("button", {
       text: "Cliquez pour changer la couleur du block ! ",
       attributs: {
         id: "btnChangeColor",
@@ -143,7 +142,7 @@ export class ChristopheView extends AbstractView {
             .children.sort(() => Math.random() - 0.5),
       });
     };
-    return createElement("button", {
+    return createComponent("button", {
       text: "Shuffle !",
       attributs: {
         id: "ShuffleBtn",

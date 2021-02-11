@@ -1,52 +1,48 @@
-import { Component } from "../../esgireact/EsgiReact.module.js";
+import { LinkNavbarComponent } from "./LinkNavbar.component.js";
+import {Component} from '../esgireact/Component.module.js';
 
 /**
- * preset de component : MainBody
+ * preset de component : Navbar
  */
-export class MainBodyComponent extends Component {
+export class NavbarComponent extends Component {
+
   /** Définiton du modèle et de la structure **/
+
   static componentModel = {
     type: "string",
     attributs: {
       id: "string",
       class: "string",
     },
-    text: "string",
-    children: [Component],
-    event: ["function"],
+    children: [LinkNavbarComponent],
   };
 
   static propStructure() {
     return {
-      type: "main",
+      type: "nav",
       attributs: {
         id: "{{ content.attributs.id }}",
         class: "{{ content.attributs.class }}",
       },
-      text: "{{ content.text }}",
       children: "{{ content.children }}",
-      event: "{{ content.event }}",
     };
   }
 
-  constructor(props) {
-    super(
-      MainBodyComponent.componentModel,
-      MainBodyComponent.propStructure(),
-      props
-    );
-  }
-
+  // raccourci pour avoir la structure de l'extérieur
   static getPropsStructured() {
     return {
-      type: "main",
+      type: "nav",
       attributs: {
         id: "",
         class: "",
       },
-      text: "",
       children: [],
-      event: [],
     };
   }
+
+  constructor(props) {
+    super(NavbarComponent.componentModel, NavbarComponent.propStructure(), props);
+  }
+
+
 }

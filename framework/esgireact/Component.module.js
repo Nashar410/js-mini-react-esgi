@@ -12,11 +12,16 @@ import { deepCopy, deepEqual } from "../utils/Utils.module.js";
  * Contient toutes les méthodes pour se créer et se mettre à jour
  */
 export class Component {
-  /** State, ne doit pas être appelé en tant que tel
-   * @deprecated
+  /** State, ne doit pas être utilisé pour la mise à jour, préféré getState qui en rend une copie
    */
   currentState;
 
+  /**
+   *
+   * @param componentModel
+   * @param propsStructure
+   * @param propsSend
+   */
   constructor(componentModel, propsStructure, propsSend) {
     /** Vérification des entrants */
 
@@ -27,6 +32,7 @@ export class Component {
       );
     }
 
+    // Si les props arrivent à s'interpolate
     let props = {};
     try {
       // On colle le contenu des props send dans les props
@@ -49,26 +55,45 @@ export class Component {
       return id;
     };
 
-    /** Setters */
+    /** Setter du currentState, effectue un copie profonde des newProps et l'affecte au state */
     this.setCurrentState = function (newProps) {
+      // Sauvegarde des childrens pour ne pas qu'il soit copié/découplé
       const children = !!this.currentState.children
         ? [...this.currentState.children]
         : [];
+
       // Copie totalement l'objet currentState en créant un nouvel objet
       this.currentState = deepCopy(newProps);
+
+      //Réaffectation des children
       this.currentState.children = !!children ? children : [];
     };
   }
 
+  /**
+   * Retourne une copie du currentState
+   * @returns {*}
+   */
   getState() {
+    // Sauvegarde des childrens pour ne pas qu'il soit copié/découplé
     const children = !!this.currentState.children
       ? [...this.currentState.children]
       : [];
+
+    // Copie totalement l'objet currentState en créant un nouvel objet
     const copy = deepCopy(this.currentState);
+
+    //Réaffectation des children
     copy.children = !!children ? children : [];
+
     return copy;
   }
 
+  /**
+   * Lance la procédure de mise à jour du component
+   * @param newProps
+   * @returns {*}
+   */
   setState(newProps) {
     return this.display(newProps);
   }
@@ -113,7 +138,7 @@ export class Component {
       // on boucle sur les childrens entrant
 
       for (const child of newProps.children) {
-        // Pour chacun d'eux, déterminé s'ils sont présents dans les anciennes
+        // Pour chacun d'eux, déterminer s'ils sont présents dans les anciennes
         const currentChild = this.currentState.children.filter(
           (ch) => ch.getComponentId() === child.getComponentId()
         );
@@ -158,6 +183,7 @@ export class Component {
     //On boucle sur les attributs si ils existent, pour définir chacun de ses attributs sur notre nouvel élement
     if (!!this.currentState.attributs) {
       for (const [key, value] of Object.entries(this.currentState.attributs)) {
+        // exemple : "id" "monId" ; "class" " maClass container collapse"
         elementHTML.setAttribute(key, value);
       }
     }
@@ -165,6 +191,7 @@ export class Component {
     //On boucle sur les évènements rattachés à l'élement si ils existent pour les lui assigner
     if (!!this.currentState.event) {
       for (const ev of this.currentState.event) {
+        // exemple : "click" "()=>alert("coucou") ; "change" "($event) => console.log($event.target.value)"
         elementHTML.addEventListener(ev.name, ev);
       }
     }
@@ -174,25 +201,27 @@ export class Component {
     }
 
     // PLacer l'id du component dans le data de l'élément
+    // Donnera par exemple <div id="..." data-id="klopsd04.kj">Mon component div</div>
     elementHTML.setAttribute("data-id", this.getComponentId());
 
-    //On vérifie sur des enfants existent, si oui on boucle sur chacun d'entre eux
+    //On vérifie sur des enfants existent
     if (!!this.currentState.children) {
+      //  si oui on boucle sur chacun d'entre eux
       for (let child of this.currentState.children) {
-        //Pour chaque enfant, on le converti en HTML et on l'insère à notre nouvel élement
+        //Pour chaque enfant, l'insèrer à notre nouvel élement
         elementHTML.appendChild(child);
       }
     }
-    // On l'instance de ce component dans l'HTML
+    // On stock le component actuelle dans l'HTML pour le retrouver rapidement
     elementHTML.component = this;
 
     // Si la vu existe dans le DOM, on la remplace par celle qu'on vient de créer, sinon on retourne l'élément html
     const existingHTML = getHTMLElementByComponentId(this.getComponentId());
-
     if (!!existingHTML) {
       // On remplace
       existingHTML.parentNode.replaceChild(elementHTML, existingHTML);
     } else {
+      // Sinon retourne directement l'html
       return elementHTML;
     }
   }

@@ -1,7 +1,8 @@
 import routes from "./routes.js";
 
 /*********************************************************************
- *                          Logique du router                        *
+ *                          Logique du router                       *
+ *           basé sur : https://www.youtube.com/watch?v=6BozpmSjk-Y *
  ********************************************************************/
 
 /**

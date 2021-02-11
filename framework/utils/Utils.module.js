@@ -40,6 +40,12 @@ export function type_check_v1(variable, type) {
   }
 }
 
+/**
+ * Nouveau ! Permet de vérifier si une props est conforme à son modèle
+ * @param model
+ * @param content
+ * @returns {boolean|*}
+ */
 export function type_check_v4(model, content) {
   for (let rule in model) {
     if (rule === "attributs") {
@@ -76,56 +82,87 @@ export function type_check_v4(model, content) {
   return true;
 }
 
+/**
+ * Vérifier si un le param fait partie de la liste des balises du HTML
+ * @param typeToCheck
+ * @returns {*}
+ */
 export function checkElementTags(typeToCheck) {
-  return HtmlList.htmlTags.includes(typeToCheck)
-
+  return HtmlList.htmlTags.includes(typeToCheck);
 }
 
+/**
+ * Vérifie le param est un attribut HTML valide
+ * @param typeToCheck
+ * @returns {*}
+ */
 export function checkElementAttributes(typeToCheck) {
   return HtmlList.htmlAttributes.includes(typeToCheck);
 }
 
-
-export function deepCopy(obj) {
-
-
-  if(typeof obj !== 'object' || obj === null) {
-    return obj;
+/**
+ * Copie profondément un objet (ses propriétés et ses valeurs)
+ * @source https://medium.com/weekly-webtips/deep-clone-with-vanilla-js-5ef16e0b365c
+ * @param toCopy
+ * @returns {{}|*}
+ */
+export function deepCopy(toCopy) {
+  // Si pas du type object ou null, on retourne
+  if(typeof toCopy !== 'object' || toCopy === null) {
+    return toCopy;
   }
-  if(obj instanceof Array) {
-    return obj.reduce((arr, item, i) => {
+
+  // Si du type array
+  if(toCopy instanceof Array) {
+    // reduce de l'array pour copier les contents dans un nouvelle arr (accumulateur de l'ancien)
+    return toCopy.reduce((arr, item, i) => {
       arr[i] = deepCopy(item);
       return arr;
     }, []);
   }
-
-
-  if(obj instanceof Object) {
-    return Object.keys(obj).reduce((newObj, key) => {
-      newObj[key] = deepCopy(obj[key]);
+// Si c'est un object
+  if(toCopy instanceof Object) {
+    // reduce de l'objet dans un nouvelle objet (accumulateur)
+    return Object.keys(toCopy).reduce((newObj, key) => {
+      newObj[key] = deepCopy(toCopy[key]);
       return newObj;
     }, {})
   }
 }
 
-export function deepEqual(a, b){
-  if (a === b) return true;
+/**
+ * Vérifie si deux objets sont strictement égaux (proprités et valeurs)
+ * @source https://dev.to/sanderdebr/deep-equality-checking-of-objects-in-vanilla-javascript-5592
+ * @param objA
+ * @param objB
+ * @returns {boolean}
+ */
+export function deepEqual(objA, objB){
+  // Si égalité de référence
+  if (objA === objB) return true;
 
-  if (typeof a != 'object' || typeof b != 'object' || a == null || b == null) return false;
+  // Si non objet, on retourne
+  if (typeof objA != 'object' || typeof objB != 'object' || objA == null || objB == null) return false;
 
-  let keysA = Object.keys(a), keysB = Object.keys(b);
+  // Récupération des clés
+  let keysA = Object.keys(objA), keysB = Object.keys(objB);
 
+  // Si length différente, pas d'égalité possible
   if (keysA.length !== keysB.length) return false;
 
+  // Pour chaque propriété
   for (let key of keysA) {
+    // Si absence de l'autre objet
     if (!keysB.includes(key)) return false;
 
-    if (typeof a[key] === 'function' || typeof b[key] === 'function') {
-      if (a[key].toString() !== b[key].toString()) return false;
+    // Vérification du type de la propriété
+    if (typeof objA[key] === 'function' || typeof objB[key] === 'function') {
+      // Si les objets sont différents en string, pas égaux
+      if (objA[key].toString() !== objB[key].toString()) return false;
     } else {
-      if (!deepEqual(a[key], b[key])) return false;
+      // Sinon, on retourne en récurcif
+      if (!deepEqual(objA[key], objB[key])) return false;
     }
   }
-
   return true;
 }

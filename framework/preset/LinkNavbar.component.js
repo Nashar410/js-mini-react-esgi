@@ -1,10 +1,12 @@
-import { Component } from "../../esgireact/EsgiReact.module.js";
-
 /**
- * preset de component : Navbar
+ * preset de component : LinkNavbar
  */
+import {Component} from '../esgireact/Component.module.js';
+
 export class LinkNavbarComponent extends Component {
+
   /** Définiton du modèle et de la structure **/
+
   static componentModel = {
     type: "string",
     attributs: {
@@ -37,6 +39,7 @@ export class LinkNavbarComponent extends Component {
     );
   }
 
+  // raccourci pour avoir la structure de l'extérieur
   static getPropsStructured() {
     return {
       type: "a",

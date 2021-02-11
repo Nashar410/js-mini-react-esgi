@@ -1,3 +1,7 @@
+/**
+ * Liste des balises HTML existante
+ * @type {string[]}
+ */
 export const htmlTags = [
   "a",
   "abbr",
@@ -117,6 +121,11 @@ export const htmlTags = [
   "video",
   "wbr",
 ];
+
+/**
+ * Liste des attributs de balise HTML
+ * @type {string[]}
+ */
 export const htmlAttributes = [
   "accept",
   "accept-charset",

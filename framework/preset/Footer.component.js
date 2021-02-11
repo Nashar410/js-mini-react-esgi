@@ -1,10 +1,11 @@
-import { Component } from "../../esgireact/EsgiReact.module.js";
 
+import {Component} from '../esgireact/Component.module.js';
 /**
- * preset de component : Navbar
+ * preset de component : Footer (bas de page)
  */
 export class FooterComponent extends Component {
   /** Définiton du modèle et de la structure **/
+
   static componentModel = {
     type: "string",
     attributs: {
@@ -31,6 +32,7 @@ export class FooterComponent extends Component {
     );
   }
 
+  // raccourci pour avoir la structure de l'extérieur
   static getPropsStructured() {
     return {
       type: "footer",
