@@ -47,6 +47,7 @@ export class MathieuView extends AbstractView {
       titlePageMathieu,
         this.getAsideContent(),
         this.getMainContent(),
+        this.getInfoLoc(),
     ];
     propsMainBody.attributs.class = "w3-container w3-light-grey bodyMathieu";
     propsMainBody.attributs.id = "mainBody";
@@ -130,5 +131,75 @@ export class MathieuView extends AbstractView {
     });
   }
 
+  getInfoLoc() {
+    const click = () => {
+      geoFindMe();
+    };
+    return createComponent('div', {
+      text: '',
+      attributs: {
+        id: "perdu",
+      },
+      children : [
+        createComponent('button', {
+          text: 'Vous ne savez plus ou vous êtes ?',
+          attributs : {
+            id: 'find-me',
+          },
+          event: [click],
+        }),
+        createComponent('p', {
+          attributs : {
+            id: 'status',
+          }
+        }),
+        createComponent('p', {
+          text: '',
+          attributs : {
+            id: 'map-link'
+          }
+        }),
+        createComponent('p', {
+          text: '',
+          attributs : {
+            id: 'merci-beaucoup'
+          }
+        }),
+      ]
+    });
+
+  }
 
 }
+
+function geoFindMe() {
+
+  const status = document.querySelector('#status');
+  const mapLink = document.querySelector('#map-link');
+  const merci = document.querySelector('#merci-beaucoup');
+
+  mapLink.href = '';
+  mapLink.textContent = '';
+
+  function success(position) {
+    const latitude  = position.coords.latitude;
+    const longitude = position.coords.longitude;
+
+    status.textContent = '';
+    mapLink.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} °`;
+    merci.textContent = `Ravi de vous avoir été utile :)`;
+  }
+
+  function error() {
+    status.textContent = 'Impossible de trouver votre localisation :(';
+  }
+
+  if(!navigator.geolocation) {
+    status.textContent = 'Votre navigateur ne permet pas la géolocalisation :(';
+  } else {
+    status.textContent = 'Géolocalisation…';
+    navigator.geolocation.getCurrentPosition(success, error);
+  }
+  document.querySelector('#find-me').addEventListener('click', geoFindMe);
+}
+
